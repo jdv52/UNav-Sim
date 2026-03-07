@@ -30,7 +30,9 @@ namespace airlib
             Gps = 3,
             Magnetometer = 4,
             Distance = 5,
-            Lidar = 6
+            Lidar = 6,
+            Sonar = 7,
+            Dvl = 8
         };
 
         SensorBase(const std::string& sensor_name = "")

@@ -339,7 +339,6 @@
     <ClInclude Include="include\vehicles\multirotor\api\MultirotorRpcLibServer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    
     <ClInclude Include="include\vehicles\rov\api\RovRpcLibServer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -460,6 +459,18 @@
     <ClInclude Include="include\common\common_utils\SmoothingFilter.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\vehicles\rov\api\RovRpcLibClient.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vehicles\rov\firmwares\mavlink\MavLinkRovApi.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vehicles\rov\api\RovApiBase.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sensors\sonar\SonarBase.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\safety\ObstacleMap.cpp">
@@ -477,7 +488,6 @@
     <ClCompile Include="src\vehicles\rov\api\RovRpcLibServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    
     <ClCompile Include="src\vehicles\car\api\CarRpcLibClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -487,11 +497,9 @@
     <ClCompile Include="src\vehicles\multirotor\api\MultirotorRpcLibClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    
     <ClCompile Include="src\vehicles\rov\api\RovRpcLibClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    
     <ClCompile Include="src\api\RpcLibClientBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

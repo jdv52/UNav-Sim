@@ -91,15 +91,14 @@
     <ClInclude Include="include\common\ImageCaptureBase.hpp" />
     <ClInclude Include="include\api\VehicleConnectorBase.hpp" />
     <ClInclude Include="include\sensors\SensorFactory.hpp" />
+    <ClInclude Include="include\sensors\sonar\SonarBase.hpp" />
     <ClInclude Include="include\vehicles\car\api\CarApiBase.hpp" />
     <ClInclude Include="include\vehicles\multirotor\api\MultirotorCommon.hpp" />
     <ClInclude Include="include\vehicles\multirotor\api\MultirotorRpcLibAdaptors.hpp" />
     <ClInclude Include="include\vehicles\multirotor\api\MultirotorRpcLibClient.hpp" />
     <ClInclude Include="include\vehicles\multirotor\api\MultirotorRpcLibServer.hpp" />
-    
     <ClInclude Include="include\vehicles\rov\api\RovRpcLibClient.hpp" />
-    <ClInclude Include="include\vehicles\rov\api\RovRpcLibServer.hpp" />   
-    
+    <ClInclude Include="include\vehicles\rov\api\RovRpcLibServer.hpp" />
     <ClInclude Include="include\vehicles\multirotor\firmwares\mavlink\ArduCopterSoloApi.hpp" />
     <ClInclude Include="include\vehicles\multirotor\firmwares\mavlink\ArduCopterSoloParams.hpp" />
     <ClInclude Include="include\vehicles\multirotor\firmwares\simple_flight\AirSimSimpleFlightBoard.hpp" />

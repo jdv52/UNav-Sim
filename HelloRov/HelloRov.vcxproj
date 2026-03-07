@@ -42,7 +42,7 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{98BB426F-6FB5-4754-81BC-BB481900E135}</ProjectGuid>
+    <ProjectGuid>{B4C21945-ED57-4BE8-A3D3-E1477BA02972}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>HelloRov</RootNamespace>
   </PropertyGroup>
