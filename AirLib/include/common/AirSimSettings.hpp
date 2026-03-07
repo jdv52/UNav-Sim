@@ -1335,6 +1335,7 @@ namespace airlib
                 break;
             case SensorBase::SensorType::Sonar:
                 sensor_setting = std::shared_ptr<SensorSetting>(new SonarSetting());
+                break;
             default:
                 throw std::invalid_argument("Unexpected sensor type");
             }
