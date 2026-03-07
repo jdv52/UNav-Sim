@@ -92,6 +92,8 @@
     <ClInclude Include="include\api\VehicleConnectorBase.hpp" />
     <ClInclude Include="include\sensors\SensorFactory.hpp" />
     <ClInclude Include="include\sensors\sonar\SonarBase.hpp" />
+    <ClInclude Include="include\sensors\sonar\SonarSimple.hpp" />
+    <ClInclude Include="include\sensors\sonar\SonarSimpleParams.hpp" />
     <ClInclude Include="include\vehicles\car\api\CarApiBase.hpp" />
     <ClInclude Include="include\vehicles\multirotor\api\MultirotorCommon.hpp" />
     <ClInclude Include="include\vehicles\multirotor\api\MultirotorRpcLibAdaptors.hpp" />
