@@ -3,6 +3,7 @@
 #include "UnrealSensorFactory.h"
 #include "UnrealSensors/UnrealDistanceSensor.h"
 #include "UnrealSensors/UnrealLidarSensor.h"
+#include "UnrealSensors/UnrealSonarSensor.h"
 
 UnrealSensorFactory::UnrealSensorFactory(AActor* actor, const NedTransform* ned_transform)
 {
@@ -21,6 +22,9 @@ std::shared_ptr<msr::airlib::SensorBase> UnrealSensorFactory::createSensorFromSe
     case SensorBase::SensorType::Lidar:
         return std::shared_ptr<UnrealLidarSensor>(new UnrealLidarSensor(
             *static_cast<const AirSimSettings::LidarSetting*>(sensor_setting), actor_, ned_transform_));
+    case SensorBase::SensorType::Sonar:
+        return std::shared_ptr<UnrealSonarSensor>(new UnrealSonarSensor(
+            *static_cast<const AirSimSettings::SonarSetting*>(sensor_setting), actor_, ned_transform_));
     default:
         return msr::airlib::SensorFactory::createSensorFromSettings(sensor_setting);
     }

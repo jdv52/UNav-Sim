@@ -16,9 +16,12 @@ namespace airlib
     class SonarSimple : public SonarBase
     {
     public:
-        SonarSimple(const SonarSimpleParams& params = SonarSimpleParams())
-            : params_(params)
+        SonarSimple(const AirSimSettings::SonarSetting& setting = AirSimSettings::SonarSetting())
+            : SonarBase(setting.sensor_name)
         {
+            // initialize params
+            params_.initializeFromSettings(setting);
+
             //initialize frequency limiter
             freq_limiter_.initialize(params_.update_frequency, params_.startup_delay);
         }
@@ -58,7 +61,8 @@ namespace airlib
         virtual ~SonarSimple() = default;
 
     protected:
-        virtual vector<real_T> getPointCloud(const Pose& pose, double deltaTime) = 0;
+        virtual void getPointCloud(const Pose& lidar_pose, const Pose& vehicle_pose,
+                                   TTimeDelta delta_time, vector<real_T>& point_cloud) = 0;
         
         const SonarSimpleParams& getParams()
         {
@@ -68,17 +72,23 @@ namespace airlib
     private: //methods
         void updateOutput()
         {
-            TTimeDelta dt = clock()->updateSince(last_time_);
+            TTimeDelta delta_time = clock()->updateSince(last_time_);
 
-            Output output;
+            point_cloud_.clear();
+
             const GroundTruth& ground_truth = getGroundTruth();
 
             //order of Pose addition is important here because it also adds quaternions which is not commutative!
             // TODO: need to understand if there are unnecessary copies of vector being made that can be avoided.
-            auto pointCloud = getPointCloud(params_.relative_pose + ground_truth.kinematics->pose, dt);
-            output.point_cloud = pointCloud;
-            output.relative_pose = params_.relative_pose;
+            Pose sonar_pose = params_.relative_pose + ground_truth.kinematics->pose;
+            getPointCloud(params_.relative_pose, // relative lidar pose
+                          ground_truth.kinematics->pose, // relative vehicle pose
+                          delta_time,
+                          point_cloud_);
+            SonarData output;
+            output.point_cloud = point_cloud_;
             output.time_stamp = clock()->nowNanos();
+            output.pose = sonar_pose;
 
             last_time_ = output.time_stamp;
 
@@ -87,6 +97,7 @@ namespace airlib
 
     private:
         SonarSimpleParams params_;
+        vector<real_T> point_cloud_;
 
         FrequencyLimiter freq_limiter_;
         TTimePoint last_time_;

@@ -262,6 +262,15 @@ namespace airlib
             };
         };
 
+        struct SonarSetting : SensorSetting
+        {
+            enum class DataFrame
+            {
+                VehicleInertialFrame,
+                SensorLocalFrame
+            };
+        };
+
         struct VehicleSetting
         {
             //required
@@ -1324,6 +1333,8 @@ namespace airlib
             case SensorBase::SensorType::Lidar:
                 sensor_setting = std::shared_ptr<SensorSetting>(new LidarSetting());
                 break;
+            case SensorBase::SensorType::Sonar:
+                sensor_setting = std::shared_ptr<SensorSetting>(new SonarSetting());
             default:
                 throw std::invalid_argument("Unexpected sensor type");
             }

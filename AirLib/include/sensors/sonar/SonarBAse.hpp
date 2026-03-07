@@ -11,6 +11,11 @@ namespace airlib
     class SonarBase : public SensorBase
     {
     public:
+        SonarBase(const std::string& sensor_name = "")
+            : SensorBase(sensor_name)
+        {
+        }
+    public:
         virtual void reportState(StateReporter& reporter) override
         {
             //call base
