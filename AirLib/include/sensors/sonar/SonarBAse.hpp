@@ -10,23 +10,6 @@ namespace airlib
 
     class SonarBase : public SensorBase
     {
-    public: //types
-        struct Output
-        { //fields to enable creation of ROS message PointCloud2 and LaserScan
-
-            // header
-            TTimePoint time_stamp;
-            Pose relative_pose;
-
-            // data
-            // - array of floats that represent [x,y,z] coordinate for each point hit within the range
-            //       x0, y0, z0, x1, y1, z1, ..., xn, yn, zn
-            //       TODO: Do we need an intensity place-holder [x,y,z, intensity]?
-            // - in lidar local NED coordinates
-            // - in meters
-            vector<real_T> point_cloud;
-        };
-
     public:
         virtual void reportState(StateReporter& reporter) override
         {
@@ -37,19 +20,19 @@ namespace airlib
             reporter.writeValue("Sonar-NumPoints", (int)(output_.point_cloud.size() / 3));
         }
 
-        const Output& getOutput() const
+        const SonarData& getOutput() const
         {
             return output_;
         }
 
     protected:
-        void setOutput(const Output& output)
+        void setOutput(const SonarData& output)
         {
             output_ = output;
         }
 
     private:
-        Output output_;
+        SonarData output_;
     };
 }
 } //namespace

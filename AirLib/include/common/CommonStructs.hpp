@@ -412,6 +412,17 @@ namespace airlib
         }
     };
 
+    struct SonarData
+    {
+        TTimePoint time_stamp;
+        vector<real_T> point_cloud;
+        Pose pose;
+        
+        SonarData()
+        {
+        }
+    };
+
     struct MeshPositionVertexBuffersResponse
     {
         Vector3r position;

@@ -13,6 +13,7 @@
 #include "common/ImageCaptureBase.hpp"
 #include "sensors/SensorCollection.hpp"
 #include "sensors/lidar/LidarBase.hpp"
+#include "sensors/sonar/SonarBase.hpp"
 #include "sensors/imu/ImuBase.hpp"
 #include "sensors/barometer/BarometerBase.hpp"
 #include "sensors/magnetometer/MagnetometerBase.hpp"
@@ -121,6 +122,16 @@ Some methods may not be applicable to specific vehicle in which case an exceptio
                 throw VehicleControllerException(Utils::stringf("No lidar with name %s exist on vehicle", lidar_name.c_str()));
 
             return lidar->getOutput();
+        }
+
+        // Sonar APIs
+        virtual const SonarData& getSonarData(const std::string& sonar_name) const
+        {
+            auto* sonar = static_cast<const SonarBase*>(findSensorByName(sonar_name, SensorBase::SensorType::Sonar));
+            if (sonar == nullptr)
+                throw VehicleControllerException(Utils::stringf("No sonar with name %s exist on vehicle", sonar_name.c_str()));
+
+            return sonar->getOutput();
         }
 
         // IMU API
