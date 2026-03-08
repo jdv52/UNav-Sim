@@ -24,6 +24,10 @@ namespace airlib
 
             reporter.writeValue("Dvl-Timestamp", output_.time_stamp);
             reporter.writeValue("Dvl-Velocity", output_.velocity);
+
+            std::stringstream ss;
+            ss << output_.beam_ranges[0] << ", " << output_.beam_ranges[1] << ", " << output_.beam_ranges[2] << ", " << output_.beam_ranges[3];
+            reporter.writeValue("Dvl-Ranges", ss.str());
         }
 
         const DvlData& getOutput() const

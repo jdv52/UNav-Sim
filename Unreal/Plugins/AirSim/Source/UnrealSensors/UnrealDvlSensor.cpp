@@ -54,8 +54,8 @@ void UnrealDvlSensor::createBeams()
 {   
     const auto params = getParams();
 
-    float sin_elev_angle = sin(params.elevation_angle);
-    float cos_elev_angle = cos(params.elevation_angle);
+    float sin_elev_angle = sin(msr::airlib::Utils::degreesToRadians(params.elevation_angle));
+    float cos_elev_angle = cos(msr::airlib::Utils::degreesToRadians(params.elevation_angle));
 
     beam_unit_vectors_[0] = { sin_elev_angle, 0, cos_elev_angle };
     beam_unit_vectors_[1] = { 0, -sin_elev_angle, cos_elev_angle };

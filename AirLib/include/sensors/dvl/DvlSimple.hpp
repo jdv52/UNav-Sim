@@ -23,6 +23,9 @@ namespace airlib
             params_.initializeFromSettings(setting);
 
             // additive noise
+            gauss_velocity_noise_ = RandomVectorGaussianR(0, params_.velocity_noise_stddev);
+            for (int i = 0; i < 4; ++i)
+                gauss_beam_noise_[i] = RandomGeneratorGausianR(0, params_.range_noise_stddev);
             
             freq_limiter_.initialize(params_.update_frequency, params_.startup_delay);
         }
@@ -31,6 +34,10 @@ namespace airlib
         {
             freq_limiter_.reset();
             last_time_ = clock()->nowNanos();
+
+            gauss_velocity_noise_.reset();
+            for (int i = 0; i < 4; ++i)
+                gauss_beam_noise_[i].reset();
 
             updateOutput();
         }
@@ -45,14 +52,7 @@ namespace airlib
                 updateOutput();
             }
         };
-
-        virtual void reportState(StateReporter& reporter) override
-        {
-            DvlBase::reportState(reporter);
-            
-            // Report some shii
-        }
-
+        
         virtual ~DvlSimple() = default;
 
         const DvlSimpleParams& getParams() const
@@ -77,7 +77,14 @@ namespace airlib
             output.time_stamp = clock()->nowNanos();
             output.pose = dvl_pose;
             output.velocity = ground_truth.kinematics->twist.linear;
+            output.velocity += gauss_velocity_noise_.next();
+
             getBeamScans(dvl_pose, ground_truth.kinematics->pose, delta_time, output.beam_unit_vecs, output.beam_ranges);
+
+            for (int i = 0; i < 4; ++i)
+            {
+                output.beam_ranges[i] += gauss_beam_noise_[i].next();
+            }
 
             output.altitude = 0; // TODO: cos(elevation_angle) * sum(good_angles) / num_good_beams
             output.course_gnd = atan2(output.velocity.y(), output.velocity.x());
@@ -102,6 +109,9 @@ namespace airlib
 
         FrequencyLimiter freq_limiter_;
         TTimePoint last_time_;
+
+        RandomVectorGaussianR gauss_velocity_noise_;
+        std::array<RandomGeneratorGausianR, 4> gauss_beam_noise_;
     };
 }
 }

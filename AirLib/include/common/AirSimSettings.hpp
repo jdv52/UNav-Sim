@@ -273,11 +273,6 @@ namespace airlib
         
         struct DvlSetting : SensorSetting
         {
-            enum class DataFrame
-            {
-                VehicleInertialFrame,
-                SensorLocalFrame
-            };
         };
 
         struct VehicleSetting

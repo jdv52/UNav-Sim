@@ -11,20 +11,19 @@ namespace airlib
 
     struct DvlSimpleParams
     {
-        real_T elevation_angle = 20.0;
+        real_T elevation_angle = 30.0;
         real_T range_max = 10.0;
 
         Pose relative_pose; // position and orientation
 
         bool return_ranges = true;
         bool draw_debug_lines = false;
-        AirSimSettings::SonarSetting::DataFrame data_frame;
-
+        
         real_T update_frequency = 10; // Hz
         real_T startup_delay = 0; // sec
 
-        // velocity sigma + covariances
-        // range sigma + covariances
+        real_T velocity_noise_stddev = 0.01f; // m/s
+        real_T range_noise_stddev = 0.01f; // m
 
         void initializeFromSettings(const AirSimSettings::DvlSetting& settings)
         {
@@ -35,17 +34,8 @@ namespace airlib
             range_max = settings_json.getFloat("RangeMax", range_max);
             draw_debug_lines = settings_json.getBool("DrawDebugLines", draw_debug_lines);
             return_ranges = settings_json.getBool("ReturnRanges", return_ranges);
-            
-            std::string frame = settings_json.getString("DataFrame", AirSimSettings::kVehicleInertialFrame);
-            if (frame == AirSimSettings::kVehicleInertialFrame) {
-                data_frame = AirSimSettings::SonarSetting::DataFrame::VehicleInertialFrame;
-            }
-            else if (frame == AirSimSettings::kSensorLocalFrame) {
-                data_frame = AirSimSettings::SonarSetting::DataFrame::SensorLocalFrame;
-            }
-            else {
-                throw std::runtime_error("Unknown requested data frame");
-            }
+            velocity_noise_stddev = settings_json.getFloat("SigmaVelocity", velocity_noise_stddev);
+            range_noise_stddev = settings_json.getFloat("SigmaRange", range_noise_stddev);
 
             relative_pose.position = AirSimSettings::createVectorSetting(settings_json, VectorMath::nanVector());
             auto rotation = AirSimSettings::createRotationSetting(settings_json, AirSimSettings::Rotation::nanRotation());

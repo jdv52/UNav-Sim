@@ -39,7 +39,7 @@
           "SensorType": 8,
           "Enabled": true,
           "RangeMax": 10,
-          "ElevationAngle": 0.523599,
+          "ElevationAngle": 45,
           "DrawDebugLines": true,
           "ReturnRanges": true,
           "Z": 0.15
