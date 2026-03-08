@@ -19,7 +19,7 @@ UnrealDvlSensor::UnrealDvlSensor(const AirSimSettings::DvlSetting& setting,
 bool UnrealDvlSensor::shootBeam(const Pose& dvl_pose, const Pose& vehicle_pose,
                                    const Vector3r& beam_vector, float &range, const msr::airlib::DvlSimpleParams& params)
 {
-    Vector3r start = msr::airlib::VectorMath::add(dvl_pose, vehicle_pose).position;
+    Vector3r start = dvl_pose.position;
     Vector3r end = start + beam_vector;
 
     FHitResult hit_result = FHitResult(ForceInit);
@@ -57,8 +57,8 @@ void UnrealDvlSensor::createBeams()
     float sin_elev_angle = sin(params.elevation_angle);
     float cos_elev_angle = cos(params.elevation_angle);
 
-    beam_unit_vectors_[0] = { sin_elev_angle, 0, -cos_elev_angle };
-    beam_unit_vectors_[1] = { 0, -sin_elev_angle, -cos_elev_angle };
-    beam_unit_vectors_[2] = { -sin_elev_angle, 0, -cos_elev_angle };
-    beam_unit_vectors_[3] = { 0, sin_elev_angle, -cos_elev_angle };
+    beam_unit_vectors_[0] = { sin_elev_angle, 0, cos_elev_angle };
+    beam_unit_vectors_[1] = { 0, -sin_elev_angle, cos_elev_angle };
+    beam_unit_vectors_[2] = { -sin_elev_angle, 0, cos_elev_angle };
+    beam_unit_vectors_[3] = { 0, sin_elev_angle, cos_elev_angle };
 }

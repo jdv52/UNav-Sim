@@ -39,14 +39,16 @@
           "SensorType": 8,
           "Enabled": true,
           "RangeMax": 10,
-          "ElevationAngle": 30,
+          "ElevationAngle": 0.523599,
           "DrawDebugLines": true,
-          "ReturnRanges": true
+          "ReturnRanges": true,
+          "Z": 0.15
         },
         "Sonar": {
           "SensorType": 7,
           "Enabled": true,
-          "RangeMax": 10
+          "RangeMax": 10,
+          "Z": 1
         }
       }
  }

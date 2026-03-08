@@ -950,19 +950,28 @@ void ASimModeBase::drawDvlDebugPoints()
                     FVector start_point = pawn_sim_api->getNedTransform().fromLocalNed(start);
 
                     for (int j = 0; j < 4; ++j) {
-                        Vector3r end = start + (dvl_sensor_data.beam_unit_vecs[j]);
+                        Vector3r end = start + (dvl_sensor_data.beam_unit_vecs[j] * dvl_sensor_data.beam_ranges[j]);
 
-                        FVector uu_point = pawn_sim_api->getNedTransform().fromLocalNed(end);
+                        FVector end_point = pawn_sim_api->getNedTransform().fromLocalNed(end);
 
                         DrawDebugLine(
                             this->GetWorld(),
                             start_point,
-                            uu_point,
+                            end_point,
                             FColor::Green,
                             false,
                             .03,
                             ECC_WorldStatic,
                             1.f);
+
+                        DrawDebugPoint(
+                            this->GetWorld(),
+                            end_point,
+                            10, // size
+                            FColor::Red,
+                            false, // persistent (never goes away)
+                            0.03 // LifeTime: point leaves a trail on moving object
+                        );
                     }
                 }
             }
