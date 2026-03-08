@@ -184,6 +184,11 @@ __pragma(warning(disable : 4239))
             return pimpl_->client.call("getLidarData", sonar_name, vehicle_name).as<RpcLibAdaptorsBase::SonarData>().to();
         }
 
+        msr::airlib::DvlData RpcLibClientBase::getDvlData(const std::string& dvl_name, const std::string& vehicle_name) const
+        {
+            return pimpl_->client.call("getDvlData", dvl_name, vehicle_name).as<RpcLibAdaptorsBase::DvlData>().to();
+        }
+
         msr::airlib::ImuBase::Output RpcLibClientBase::getImuData(const std::string& imu_name, const std::string& vehicle_name) const
         {
             return pimpl_->client.call("getImuData", imu_name, vehicle_name).as<RpcLibAdaptorsBase::ImuData>().to();

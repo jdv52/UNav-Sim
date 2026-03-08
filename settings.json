@@ -34,13 +34,22 @@
             "Pitch": 0.0, "Roll": 0.0, "Yaw": 0.0
           }
         },
-	"Sensors": {
-	  "Sonar1": {
-            "SensorType": 7,
-	    "Enabled": true
-	  }
-	}
+      "Sensors": {
+        "Dvl1": {
+          "SensorType": 8,
+          "Enabled": true,
+          "RangeMax": 10,
+          "ElevationAngle": 30,
+          "DrawDebugLines": true,
+          "ReturnRanges": true
+        },
+        "Sonar": {
+          "SensorType": 7,
+          "Enabled": true,
+          "RangeMax": 10
+        }
       }
-   }
+ }
+}
 }
 

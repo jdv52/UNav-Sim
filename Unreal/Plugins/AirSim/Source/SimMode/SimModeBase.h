@@ -215,6 +215,8 @@ private:
     bool lidar_draw_debug_points_ = false;
     static ASimModeBase* SIMMODE;
 
+    bool dvl_draw_debug_points_ = false;
+
 private:
     void setStencilIDs();
     void initializeTimeOfDay();
@@ -223,5 +225,6 @@ private:
     void setupPhysicsLoopPeriod();
     void showClockStats();
     void drawLidarDebugPoints();
+    void drawDvlDebugPoints();
     void drawDistanceSensorDebugPoints();
 };

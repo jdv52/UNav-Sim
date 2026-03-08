@@ -14,6 +14,7 @@
 #include "sensors/SensorCollection.hpp"
 #include "sensors/lidar/LidarBase.hpp"
 #include "sensors/sonar/SonarBase.hpp"
+#include "sensors/dvl/DvlBase.hpp"
 #include "sensors/imu/ImuBase.hpp"
 #include "sensors/barometer/BarometerBase.hpp"
 #include "sensors/magnetometer/MagnetometerBase.hpp"
@@ -132,6 +133,16 @@ Some methods may not be applicable to specific vehicle in which case an exceptio
                 throw VehicleControllerException(Utils::stringf("No sonar with name %s exist on vehicle", sonar_name.c_str()));
 
             return sonar->getOutput();
+        }
+        
+        // Dvl APIs
+        virtual const DvlData& getDvlData(const std::string& dvl_name) const
+        {
+            auto* dvl = static_cast<const DvlBase*>(findSensorByName(dvl_name, SensorBase::SensorType::Dvl));
+            if (dvl == nullptr)
+                throw VehicleControllerException(Utils::stringf("No DVL with name %s exist on vehicle", dvl_name.c_str()));
+
+            return dvl->getOutput();
         }
 
         // IMU API

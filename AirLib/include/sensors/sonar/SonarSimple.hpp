@@ -61,7 +61,7 @@ namespace airlib
         virtual ~SonarSimple() = default;
 
     protected:
-        virtual void getPointCloud(const Pose& lidar_pose, const Pose& vehicle_pose,
+        virtual void getPointCloud(const Pose& sonar_pose, const Pose& vehicle_pose,
                                    TTimeDelta delta_time, vector<real_T>& point_cloud) = 0;
         
         const SonarSimpleParams& getParams()

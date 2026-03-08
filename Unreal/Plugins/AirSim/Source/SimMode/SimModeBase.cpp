@@ -17,6 +17,7 @@
 #include "common/EarthCelestial.hpp"
 #include "sensors/lidar/LidarSimple.hpp"
 #include "sensors/distance/DistanceSimple.hpp"
+#include "sensors/dvl/DvlSimple.hpp"
 
 #include "Weather/WeatherLib.h"
 
@@ -362,6 +363,8 @@ void ASimModeBase::Tick(float DeltaSeconds)
     drawLidarDebugPoints();
 
     drawDistanceSensorDebugPoints();
+
+    drawDvlDebugPoints();
 
     Super::Tick(DeltaSeconds);
 }
@@ -915,6 +918,52 @@ void ASimModeBase::drawDistanceSensorDebugPoints()
                         false, // persistent (never goes away)
                         0.03 // LifeTime: point leaves a trail on moving object
                     );
+                }
+            }
+        }
+    }
+}
+
+void ASimModeBase::drawDvlDebugPoints()
+{
+    if (getApiProvider() == nullptr)
+        return;
+
+    for (auto& sim_api : getApiProvider()->getVehicleSimApis()) {
+        PawnSimApi* pawn_sim_api = static_cast<PawnSimApi*>(sim_api);
+        std::string vehicle_name = pawn_sim_api->getVehicleName();
+
+        msr::airlib::VehicleApiBase* api = getApiProvider()->getVehicleApi(vehicle_name);
+
+        if (api != nullptr) {
+            msr::airlib::uint count_dvl_sensors = api->getSensors().size(SensorType::Dvl);
+
+            for (msr::airlib::uint i = 0; i < count_dvl_sensors; ++i) {
+                const msr::airlib::DvlSimple* dvl =
+                    static_cast<const msr::airlib::DvlSimple*>(api->getSensors().getByType(SensorType::Dvl, i));
+
+                if (dvl != nullptr && dvl->getParams().draw_debug_lines) {
+                    msr::airlib::DvlData dvl_sensor_data = dvl->getOutput();
+
+                    Pose dvl_sensor_pose = dvl_sensor_data.pose;
+                    Vector3r start = dvl_sensor_pose.position;
+                    FVector start_point = pawn_sim_api->getNedTransform().fromLocalNed(start);
+
+                    for (int j = 0; j < 4; ++j) {
+                        Vector3r end = start + (dvl_sensor_data.beam_unit_vecs[j]);
+
+                        FVector uu_point = pawn_sim_api->getNedTransform().fromLocalNed(end);
+
+                        DrawDebugLine(
+                            this->GetWorld(),
+                            start_point,
+                            uu_point,
+                            FColor::Green,
+                            false,
+                            .03,
+                            ECC_WorldStatic,
+                            1.f);
+                    }
                 }
             }
         }

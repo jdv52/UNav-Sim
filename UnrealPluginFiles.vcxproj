@@ -124,6 +124,7 @@
     <ClCompile Include="Unreal\Plugins\AirSim\Source\TextureShuffleActor.cpp" />
     <ClCompile Include="Unreal\Plugins\AirSim\Source\UnrealImageCapture.cpp" />
     <ClCompile Include="Unreal\Plugins\AirSim\Source\UnrealSensors\UnrealDistanceSensor.cpp" />
+    <ClCompile Include="Unreal\Plugins\AirSim\Source\UnrealSensors\UnrealDvlSensor.cpp" />
     <ClCompile Include="Unreal\Plugins\AirSim\Source\UnrealSensors\UnrealLidarSensor.cpp" />
     <ClCompile Include="Unreal\Plugins\AirSim\Source\UnrealSensors\UnrealSensorFactory.cpp" />
     <ClCompile Include="Unreal\Plugins\AirSim\Source\UnrealSensors\UnrealSonarSensor.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="unreal\plugins\airsim\source\simmode\SimModeWorldBase.h" />
     <ClInclude Include="Unreal\Plugins\AirSim\Source\UnrealImageCapture.h" />
     <ClInclude Include="Unreal\Plugins\AirSim\Source\UnrealSensors\UnrealDistanceSensor.h" />
+    <ClInclude Include="Unreal\Plugins\AirSim\Source\UnrealSensors\UnrealDvlSensor.h" />
     <ClInclude Include="Unreal\Plugins\AirSim\Source\UnrealSensors\UnrealLidarSensor.h" />
     <ClInclude Include="Unreal\Plugins\AirSim\Source\UnrealSensors\UnrealSensorFactory.h" />
     <ClInclude Include="Unreal\Plugins\AirSim\Source\UnrealSensors\UnrealSonarSensor.h" />

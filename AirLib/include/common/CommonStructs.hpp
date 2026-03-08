@@ -423,6 +423,28 @@ namespace airlib
         }
     };
 
+    struct DvlData
+    {
+        TTimePoint time_stamp;
+        Pose pose;
+        Vector3r velocity;
+        std::array<float, 9> velocity_covariance;
+
+        float altitude;
+        float course_gnd;
+        float speed_gnd;
+
+        int num_good_beams;
+        float sound_speed;
+
+        bool beam_ranges_valid;
+        bool beam_velocities_valid;
+
+        std::array<Vector3r, 4> beam_unit_vecs;
+        std::array<float, 4> beam_ranges;
+        std::array<float, 4> range_covariances;
+    };
+
     struct MeshPositionVertexBuffersResponse
     {
         Vector3r position;

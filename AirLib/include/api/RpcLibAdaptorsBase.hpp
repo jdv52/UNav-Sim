@@ -673,6 +673,102 @@ namespace airlib_rpclib
             }
         };
 
+        struct DvlData
+        {
+            msr::airlib::TTimePoint time_stamp;
+            Pose pose;
+
+            bool beam_ranges_valid;
+            bool beam_velocities_valid;
+
+            Vector3r velocity;
+            std::array<float, 9> velocity_covariance;
+
+            std::array<float, 4> beam_ranges;
+            std::array<float, 4> range_covariances;
+            
+            std::array<Vector3r, 4> beam_unit_vecs;
+
+            float altitude;
+            float course_gnd;
+            float speed_gnd;
+
+            int num_good_beams;
+            float sound_speed;
+
+            MSGPACK_DEFINE_MAP(
+                time_stamp, pose, beam_ranges_valid, beam_velocities_valid,
+                velocity, velocity_covariance, beam_ranges, range_covariances,
+                beam_unit_vecs, altitude, course_gnd, speed_gnd, num_good_beams,
+                sound_speed
+            )
+
+            DvlData()
+            {
+
+            }
+
+            DvlData(const msr::airlib::DvlData& s)
+            {
+                time_stamp = s.time_stamp;
+                pose = s.pose;
+
+                beam_ranges_valid = s.beam_ranges_valid;
+                beam_velocities_valid = s.beam_velocities_valid;
+
+                velocity = Vector3r(s.velocity);
+                for (size_t i = 0; i < velocity_covariance.size(); ++i)
+                    velocity_covariance[i] = s.velocity_covariance[i];
+
+                for (size_t i = 0; i < beam_ranges.size(); ++i)
+                    beam_ranges[i] = s.beam_ranges[i];
+                for (size_t i = 0; i < range_covariances.size(); ++i)
+                    range_covariances[i] = s.range_covariances[i];
+
+                for (size_t i = 0; i < beam_unit_vecs.size(); ++i)
+                    beam_unit_vecs[i] = Vector3r(s.beam_unit_vecs[i]);
+
+                altitude = s.altitude;
+                course_gnd = s.course_gnd;
+                speed_gnd = s.speed_gnd;
+
+                num_good_beams = s.num_good_beams;
+                sound_speed = s.sound_speed;
+            }
+
+            msr::airlib::DvlData to() const
+            {
+                msr::airlib::DvlData d;
+
+                d.time_stamp = time_stamp;
+                d.pose = pose.to();
+                d.velocity = velocity.to();
+                for (size_t i = 0; i < velocity_covariance.size(); ++i)
+                    d.velocity_covariance[i] = velocity_covariance[i];
+
+                d.altitude = altitude;
+                d.course_gnd = course_gnd;
+                d.speed_gnd = speed_gnd;
+
+                d.num_good_beams = num_good_beams;
+                d.sound_speed = sound_speed;
+
+                d.beam_ranges_valid = beam_ranges_valid;
+                d.beam_velocities_valid = beam_velocities_valid;
+
+                for (size_t i = 0; i < beam_unit_vecs.size(); ++i)
+                    d.beam_unit_vecs[i] = beam_unit_vecs[i].to();
+
+                for (size_t i = 0; i < beam_ranges.size(); ++i)
+                    d.beam_ranges[i] = beam_ranges[i];
+
+                for (size_t i = 0; i < range_covariances.size(); ++i)
+                    d.range_covariances[i] = range_covariances[i];
+
+                return d;
+            }
+        };
+
         struct ImuData
         {
             msr::airlib::TTimePoint time_stamp;
