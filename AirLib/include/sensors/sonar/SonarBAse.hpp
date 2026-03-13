@@ -22,7 +22,7 @@ namespace airlib
             UpdatableObject::reportState(reporter);
 
             reporter.writeValue("Sonar-Timestamp", output_.time_stamp);
-            reporter.writeValue("Sonar-NumPoints", (int)(output_.point_cloud.size() / 3));
+            reporter.writeValue("Sonar-NumPoints", output_.image.size());
         }
 
         const SonarData& getOutput() const

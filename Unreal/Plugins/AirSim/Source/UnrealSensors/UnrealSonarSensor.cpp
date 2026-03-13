@@ -13,114 +13,50 @@ UnrealSonarSensor::UnrealSonarSensor(const AirSimSettings::SonarSetting& setting
                                      AActor* actor, const NedTransform* ned_transform)
     : SonarSimple(setting), actor_(actor), ned_transform_(ned_transform)
 {
-    createLasers();
-}
-
-// initializes information based on lidar configuration
-void UnrealSonarSensor::createLasers()
-{
-    const msr::airlib::SonarSimpleParams params = getParams();
-
-    // const auto number_of_lasers = params.number_of_channels;
-    const auto number_of_lasers = 0;
-
-    if (number_of_lasers <= 0)
-        return;
-
-    // calculate verticle angle distance between each laser
-    float delta_angle = 0;
-    if (number_of_lasers > 1)
-        delta_angle = params.elevation_angle / static_cast<float>(number_of_lasers - 1);
-
-    // store vertical angles for each laser
-    laser_angles_.clear();
-    for (auto i = 0u; i < number_of_lasers; ++i) {
-        const float vertical_angle = (params.elevation_angle / 2) - static_cast<float>(i) * delta_angle;
-        laser_angles_.emplace_back(vertical_angle);
-    }
+    
 }
 
 // returns a point-cloud for the tick
 void UnrealSonarSensor::getPointCloud(const msr::airlib::Pose& sonar_pose, const msr::airlib::Pose& vehicle_pose,
-                                      const msr::airlib::TTimeDelta delta_time, msr::airlib::vector<msr::airlib::real_T>& point_cloud)
+                                      const msr::airlib::TTimeDelta delta_time, msr::airlib::vector<msr::airlib::real_T>& image,
+                                      msr::airlib::vector<msr::airlib::real_T>& point_cloud)
 {
-    point_cloud.clear();
+    image.clear();
 
     const msr::airlib::SonarSimpleParams params = getParams();
-    // const auto number_of_lasers = params.number_of_channels;
-    const auto number_of_lasers = 1;
 
-    // cap the points to scan via ray-tracing; this is currently needed for car/Unreal tick scenarios
-    // since SensorBase mechanism uses the elapsed clock time instead of the tick delta-time.
-    constexpr float MAX_POINTS_IN_SCAN = 1e+5f;
-    // uint32 total_points_to_scan = FMath::RoundHalfFromZero(params.points_per_second * delta_time);
-    uint32 total_points_to_scan = 0;
-    if (total_points_to_scan > MAX_POINTS_IN_SCAN) {
-        total_points_to_scan = MAX_POINTS_IN_SCAN;
-        UAirBlueprintLib::LogMessageString("Sonar: ", "Capping number of points to scan", LogDebugLevel::Failure);
-    }
+    // get sonar pose and orientation
+    Vector3r dummy;
 
-    // calculate number of points needed for each laser/channel
-    const uint32 points_to_scan_with_one_laser = FMath::RoundHalfFromZero(total_points_to_scan / float(number_of_lasers));
-    if (points_to_scan_with_one_laser <= 0) {
-        //UAirBlueprintLib::LogMessageString("Lidar: ", "No points requested this frame", LogDebugLevel::Failure);
-        return;
-    }
+    /*
+    image.assign(params.num_azimuth_bins * params.num_range_bins, FLT_MAX);
 
-    // calculate needed angle/distance between each point
-    const float angle_distance_of_tick = params.azimuth_angle * 360.0f * delta_time;
-    const float angle_distance_of_laser_measure = angle_distance_of_tick / points_to_scan_with_one_laser;
-
-    // normalize FOV start/end
-    const float laser_start = std::fmod(360.0f + params.azimuth_angle / 2, 360.0f);
-    const float laser_end = std::fmod(360.0f - params.azimuth_angle / 2, 360.0f);
-
-    const uint32 total_jobs = number_of_lasers * points_to_scan_with_one_laser;
-
-    point_cloud.assign(total_jobs * 3, FLT_MAX);
-
-    ParallelFor(total_jobs, [&](int32 idx) {
-        int32 laser_idx = (idx / points_to_scan_with_one_laser) % number_of_lasers;
-        const float vertical_angle = laser_angles_[laser_idx];
-        const float horizontal_angle = std::fmod(current_horizontal_angle_ + angle_distance_of_laser_measure * (idx % points_to_scan_with_one_laser), 360.0f);
-
-        // check if the laser is outside the requested horizontal FOV
-        if (VectorMath::isAngleBetweenAngles(horizontal_angle, laser_start, laser_end)) {
-            Vector3r point;
-            int segmentationID = -1;
-            // shoot laser and get the impact point, if any
-            if (shootLaser(sonar_pose, vehicle_pose, horizontal_angle, vertical_angle, params, point, segmentationID)) {
-                point_cloud[idx * 3] = point.x();
-                point_cloud[idx * 3 + 1] = point.y();
-                point_cloud[idx * 3 + 2] = point.z();
+    ParallelFor(
+        azimuth_angles.size(), [&](int32 i) {
+            for (auto v : elevation_angles) {
+                // detection info
+                if (shootBeam(
+                        sonar_pose, vehicle_pose, azimuth_angles[i], v, params, dummy)) {
+                    // get intensity and populate histogram
+                }
             }
-        }
-    });
-
-    // erase–remove idiom to handle non-valid elements
-    point_cloud.erase(std::remove(point_cloud.begin(), point_cloud.end(), FLT_MAX), point_cloud.end());
-
-    current_horizontal_angle_ = std::fmod(current_horizontal_angle_ + angle_distance_of_tick, 360.0f);
-
-    return;
+        },
+        EParallelForFlags::Unbalanced);
+    */
 }
 
 // simulate shooting a laser via Unreal ray-tracing.
-bool UnrealSonarSensor::shootLaser(const msr::airlib::Pose& sonar_pose, const msr::airlib::Pose& vehicle_pose,
-                                   const float horizontal_angle, const float vertical_angle,
-                                   const msr::airlib::SonarSimpleParams& params, Vector3r& point, int& segmentationID)
+bool UnrealSonarSensor::shootBeam(const msr::airlib::Pose& sonar_pose, const msr::airlib::Pose& vehicle_pose,
+                                  const float azimuth_angle, const float elevation_angle,
+                                  const msr::airlib::SonarSimpleParams& params, Vector3r& point)
 {
-    // start position
+    /*
     Vector3r start = VectorMath::add(sonar_pose, vehicle_pose).position;
 
-    // We need to compose rotations here rather than rotate a vector by a quaternion
-    // Hence using coordOrientationAdd(..) rather than rotateQuaternion(..)
-
-    // get ray quaternion in lidar frame (angles must be in radians)
-    msr::airlib::Quaternionr ray_q_l = msr::airlib::VectorMath::toQuaternion(
-        msr::airlib::Utils::degreesToRadians(vertical_angle), //pitch - rotation around Y axis
-        0, //roll  - rotation around X axis
-        msr::airlib::Utils::degreesToRadians(horizontal_angle)); //yaw   - rotation around Z axis
+    Quaternionr ray_q_l = msr::airlib::VectorMath::toQuaternion(
+        msr::airlib::Utils::degreesToRadians(elevation_angle),
+        0,
+        msr::airlib::Utils::degreesToRadians(azimuth_angle));
 
     // get ray quaternion in body frame
     msr::airlib::Quaternionr ray_q_b = VectorMath::coordOrientationAdd(ray_q_l, sonar_pose.orientation);
@@ -129,37 +65,12 @@ bool UnrealSonarSensor::shootLaser(const msr::airlib::Pose& sonar_pose, const ms
     msr::airlib::Quaternionr ray_q_w = VectorMath::coordOrientationAdd(ray_q_b, vehicle_pose.orientation);
 
     // get ray vector (end position)
-    Vector3r end = VectorMath::rotateVector(VectorMath::front(), ray_q_w, true) * params.range_max + start;
+    Vector3r end = VectorMath::rotateVector(VectorMath::front(), ray_q_w, true) * params.range_max s+ start;
 
     FHitResult hit_result = FHitResult(ForceInit);
     bool is_hit = UAirBlueprintLib::GetObstacle(actor_, ned_transform_->fromLocalNed(start), ned_transform_->fromLocalNed(end), hit_result, actor_, ECC_Visibility);
 
     if (is_hit) {
-        //Store the segmentation id of the hit object.
-        auto hitActor = hit_result.GetActor();
-        if (hitActor != nullptr) {
-            TArray<UMeshComponent*> meshComponents;
-            hitActor->GetComponents<UMeshComponent>(meshComponents);
-            for (auto* comp : meshComponents) {
-                segmentationID = comp->CustomDepthStencilValue;
-                if (segmentationID != -1)
-                    break;
-            }
-        }
-
-        if (false && UAirBlueprintLib::IsInGameThread()) {
-            // Debug code for very specific cases.
-            // Mostly shouldn't be needed. Use SimModeBase::drawLidarDebugPoints()
-            DrawDebugPoint(
-                actor_->GetWorld(),
-                hit_result.ImpactPoint,
-                5, //size
-                FColor::Red,
-                true, //persistent (never goes away)
-                0.1 //point leaves a trail on moving object
-            );
-        }
-
         // decide the frame for the point-cloud
         switch (params.data_frame) {
         case AirSimSettings::SonarSetting::DataFrame::VehicleInertialFrame:
@@ -174,17 +85,6 @@ bool UnrealSonarSensor::shootLaser(const msr::airlib::Pose& sonar_pose, const ms
             // tranform to lidar frame
             point = VectorMath::transformToBodyFrame(point_v_i, sonar_pose + vehicle_pose, true);
 
-            // The above should be same as first transforming to vehicle-body frame and then to lidar frame
-            //    Vector3r point_v_b = VectorMath::transformToBodyFrame(point_v_i, vehicle_pose, true);
-            //    point = VectorMath::transformToBodyFrame(point_v_b, lidar_pose, true);
-
-            // On the client side, if it is needed to transform this data back to the world frame,
-            // then do the equivalent of following,
-            //     Vector3r point_w = VectorMath::transformToWorldFrame(point, lidar_pose + vehicle_pose, true);
-            // See SimModeBase::drawLidarDebugPoints()
-
-            // TODO: Optimization -- instead of doing this for every point, it should be possible to do this
-            // for the point-cloud together? Need to look into matrix operations to do this together for all points.
             break;
         }
 
@@ -193,4 +93,6 @@ bool UnrealSonarSensor::shootLaser(const msr::airlib::Pose& sonar_pose, const ms
     else {
         return false;
     }
+    */
+    return false;
 }

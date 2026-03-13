@@ -415,8 +415,14 @@ namespace airlib
     struct SonarData
     {
         TTimePoint time_stamp;
-        vector<real_T> point_cloud;
         Pose pose;
+
+        bool image_valid;
+        vector<real_T> image;
+        std::pair<std::size_t, std::size_t> data_shape;
+
+        bool point_cloud_valid;
+        vector<real_T> point_cloud;
         
         SonarData()
         {
@@ -443,6 +449,10 @@ namespace airlib
         std::array<Vector3r, 4> beam_unit_vecs;
         std::array<float, 4> beam_ranges;
         std::array<float, 4> range_covariances;
+
+        DvlData()
+        {
+        }
     };
 
     struct MeshPositionVertexBuffersResponse

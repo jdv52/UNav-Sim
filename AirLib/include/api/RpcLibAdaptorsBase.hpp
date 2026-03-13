@@ -645,10 +645,16 @@ namespace airlib_rpclib
         struct SonarData
         {
             msr::airlib::TTimePoint time_stamp; // timestamp
-            std::vector<float> point_cloud; // data
             Pose pose;
+
+            bool image_valid;
+            std::vector<float> image;
+            std::pair<std::size_t, std::size_t> data_shape;
+
+            bool point_cloud_valid;
+            std::vector<float> point_cloud;
             
-            MSGPACK_DEFINE_MAP(time_stamp, point_cloud, pose);
+            MSGPACK_DEFINE_MAP(time_stamp, image, data_shape, pose);
 
             SonarData()
             {
@@ -657,18 +663,28 @@ namespace airlib_rpclib
             SonarData(const msr::airlib::SonarData& s)
             {
                 time_stamp = s.time_stamp;
-                point_cloud = s.point_cloud;
                 pose = s.pose;
+
+                image_valid = s.image_valid;
+                image = s.image;
+                data_shape = s.data_shape;
+
+                point_cloud_valid = s.point_cloud_valid;
+                point_cloud = s.point_cloud;
             }
 
             msr::airlib::SonarData to() const
             {
                 msr::airlib::SonarData d;
-
-                d.time_stamp = time_stamp;
-                d.point_cloud = point_cloud;
                 d.pose = pose.to();
 
+                d.image_valid = image_valid;
+                d.image = image;
+                d.data_shape = data_shape;
+
+                d.point_cloud_valid = point_cloud_valid;
+                d.point_cloud = point_cloud;
+                
                 return d;
             }
         };

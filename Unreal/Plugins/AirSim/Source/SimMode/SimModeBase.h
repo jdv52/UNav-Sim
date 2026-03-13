@@ -225,6 +225,7 @@ private:
     void setupPhysicsLoopPeriod();
     void showClockStats();
     void drawLidarDebugPoints();
+    void drawSonarDebugPoints();
     void drawDvlDebugPoints();
     void drawDistanceSensorDebugPoints();
 };

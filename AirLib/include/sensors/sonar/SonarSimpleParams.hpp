@@ -11,16 +11,14 @@ namespace airlib
 
     struct SonarSimpleParams
     {
-
-        // Velodyne VLP-16 Puck config
-        // https://velodynelidar.com/vlp-16.html
-
-        // default settings
-
         real_T azimuth_angle = 120.0;
         real_T elevation_angle = 20.0;
         real_T range_min = 0.1;
         real_T range_max = 10.0;
+
+        real_T azimuth_resolution = 10.0;
+        real_T range_resolution = 1.0;
+        real_T elevation_resolution = 2.0;
 
         Pose relative_pose; // position and orientation
 
@@ -35,9 +33,15 @@ namespace airlib
             std::string simmode_name = AirSimSettings::singleton().simmode_name;
 
             const auto& settings_json = settings.settings;
-            azimuth_angle = settings_json.getInt("AzimuthAngle", azimuth_angle);
+            azimuth_angle = settings_json.getFloat("AzimuthAngle", azimuth_angle);
             elevation_angle = settings_json.getFloat("ElevationAngle", elevation_angle);
             draw_debug_points = settings_json.getBool("DrawDebugPoints", draw_debug_points);
+            azimuth_resolution = settings_json.getFloat("AzimuthResolution", azimuth_resolution);
+            range_resolution = settings_json.getFloat("RangeResolution", range_resolution);
+            elevation_resolution = settings_json.getFloat("ElevationResolution", elevation_resolution);
+            range_min = settings_json.getFloat("RangeMin", range_min);
+            range_max = settings_json.getFloat("RangeMax", range_max);
+
             std::string frame = settings_json.getString("DataFrame", AirSimSettings::kVehicleInertialFrame);
             if (frame == AirSimSettings::kVehicleInertialFrame) {
                 data_frame = AirSimSettings::SonarSetting::DataFrame::VehicleInertialFrame;

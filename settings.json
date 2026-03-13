@@ -4,9 +4,14 @@
   "SimMode": "Rov",
   "ClockSpeed": 1,
   "PawnPaths": {
-    "DefaultQuadrotor": {"PawnBP": "Class'/AirSim/Blueprints/BP_FlyingPawn.BP_FlyingPawn_C'"},
-    "DefaultRov": {"PawnBP": "Class'/AirSim/Blueprints/BP_RovPawn.BP_RovPawn_C'"},
-    "DefaultComputerVision": {"PawnBP": "Class'/AirSim/Blueprints/BP_ComputerVisionPawn.BP_ComputerVisionPawn_C'"}
+    "DefaultQuadrotor": { "PawnBP": "Class'/AirSim/Blueprints/BP_FlyingPawn.BP_FlyingPawn_C'" },
+    "DefaultRov": { "PawnBP": "Class'/AirSim/Blueprints/BP_RovPawn.BP_RovPawn_C'" },
+    "DefaultComputerVision": { "PawnBP": "Class'/AirSim/Blueprints/BP_ComputerVisionPawn.BP_ComputerVisionPawn_C'" }
+  },
+  "OriginGeopoint": {
+    "Latitude": 0,
+    "Longitude": 0,
+    "Altitude": 0
   },
   "Vehicles": {
     "RovSimple": {
@@ -19,39 +24,38 @@
         "RemoteControlID": 0,
         "AllowAPIWhenDisconnected": false
       },
-        "Cameras": {
-          "front_right_custom": {
-            "CaptureSettings": [
-              {
-                "PublishToRos": 1,
-                "ImageType": 0,
-                "FOV_Degrees": 90,
-                "Width": 1280,
-                "Height": 720
-              }
-            ],
-            "X": 0.50, "Y": 0.06, "Z": 0.10,
-            "Pitch": 0.0, "Roll": 0.0, "Yaw": 0.0
-          }
-        },
+      "Cameras": {
+        "front_right_custom": {
+          "CaptureSettings": [
+            {
+              "PublishToRos": 1,
+              "ImageType": 0,
+              "FOV_Degrees": 90,
+              "Width": 1280,
+              "Height": 720
+            }
+          ],
+          "X": 0.50,
+          "Y": 0.06,
+          "Z": 0.10,
+          "Pitch": 0.0,
+          "Roll": 0.0,
+          "Yaw": 0.0
+        }
+      },
       "Sensors": {
-        "Dvl1": {
-          "SensorType": 8,
-          "Enabled": true,
-          "RangeMax": 10,
-          "ElevationAngle": 45,
-          "DrawDebugLines": true,
-          "ReturnRanges": true,
-          "Z": 0.15
-        },
         "Sonar": {
           "SensorType": 7,
           "Enabled": true,
-          "RangeMax": 10,
-          "Z": 1
+          "ElevationAngle": 2,
+          "ElevationResolution": 0.1,
+          "AzimuthResolution":  2,
+          "RangeMax": 5,
+          "Z": 0.15,
+          "DrawDebugPoints": true
         }
       }
- }
-}
+    }
+  }
 }
 
