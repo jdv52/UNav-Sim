@@ -22,77 +22,84 @@ void UnrealSonarSensor::getPointCloud(const msr::airlib::Pose& sonar_pose, const
                                       msr::airlib::vector<msr::airlib::real_T>& point_cloud)
 {
     image.clear();
+    point_cloud.clear();
 
     const msr::airlib::SonarSimpleParams params = getParams();
 
     // get sonar pose and orientation
     Vector3r dummy;
 
-    /*
-    image.assign(params.num_azimuth_bins * params.num_range_bins, FLT_MAX);
+    if (params.return_image) {
+        image.assign(azimuth_beam_count * range_bin_count, 0);
+    }
+
+    if (params.return_point_cloud) {
+        point_cloud.assign(azimuth_beam_count * elevation_ray_count * 3, FLT_MAX);
+    }
 
     ParallelFor(
-        azimuth_angles.size(), [&](int32 i) {
-            for (auto v : elevation_angles) {
-                // detection info
+        azimuth_beam_count, [&](int32 i) {
+            for (int j = 0; j < elevation_ray_count; ++j) 
+            {
+                std::size_t base_index = (i * elevation_ray_count) + j;
+
+                auto beam = getBeams()[base_index];
+
+                FHitResult hit = FHitResult(ForceInit);
+
                 if (shootBeam(
-                        sonar_pose, vehicle_pose, azimuth_angles[i], v, params, dummy)) {
-                    // get intensity and populate histogram
+                        sonar_pose, vehicle_pose, beam, params, hit)) {
+                    
+                    if (params.return_image) {
+                        FVector beam_direction = FVector(beam.x(), beam.y(), beam.z()).GetSafeNormal();
+                        float z = 0.1f;
+                        float r = (z - 0.1) / (z + 0.1);
+                        float val = r * r * FVector::DotProduct(beam_direction, hit.ImpactNormal);
+                        float dist_m = hit.Distance / 100.0f;
+
+                        if (dist_m >= params.range_min && dist_m <= params.range_max) {
+                            std::size_t range_bin = static_cast<std::size_t>(std::floor(((dist_m - params.range_min) / params.range_resolution)));
+                            // image[i * range_bin_count + range_bin] += val;
+
+                            // UAirBlueprintLib::LogMessageString("Range: " + std::to_string(dist_m), "", LogDebugLevel::Informational);
+                            // UAirBlueprintLib::LogMessageString("Range_bin: " + std::to_string(range_bin), "", LogDebugLevel::Informational);
+                        }
+                    }
+
+                    if (params.return_point_cloud) {
+                        auto hit_location = ned_transform_->toLocalNed(hit.ImpactPoint);
+
+                        auto point = VectorMath::transformToBodyFrame(hit_location, sonar_pose + vehicle_pose, true);
+
+                        point_cloud[base_index * 3] = point.x();
+                        point_cloud[base_index * 3 + 1] = point.y();
+                        point_cloud[base_index * 3 + 2] = point.z();
+                    }
                 }
             }
         },
         EParallelForFlags::Unbalanced);
-    */
+
+    // normalize histogram
 }
 
 // simulate shooting a laser via Unreal ray-tracing.
 bool UnrealSonarSensor::shootBeam(const msr::airlib::Pose& sonar_pose, const msr::airlib::Pose& vehicle_pose,
-                                  const float azimuth_angle, const float elevation_angle,
-                                  const msr::airlib::SonarSimpleParams& params, Vector3r& point)
+                                  const Vector3r& beam,
+                                  const msr::airlib::SonarSimpleParams& params, FHitResult& hit)
 {
-    /*
     Vector3r start = VectorMath::add(sonar_pose, vehicle_pose).position;
 
-    Quaternionr ray_q_l = msr::airlib::VectorMath::toQuaternion(
-        msr::airlib::Utils::degreesToRadians(elevation_angle),
-        0,
-        msr::airlib::Utils::degreesToRadians(azimuth_angle));
+    Vector3r end = start + VectorMath::rotateVector(beam, vehicle_pose.orientation, true);
 
-    // get ray quaternion in body frame
-    msr::airlib::Quaternionr ray_q_b = VectorMath::coordOrientationAdd(ray_q_l, sonar_pose.orientation);
+    
+    bool is_hit = UAirBlueprintLib::GetObstacle(
+        actor_,
+        ned_transform_->fromLocalNed(start),
+        ned_transform_->fromLocalNed(end),
+        hit,
+        actor_,
+        ECC_Visibility);
 
-    // get ray quaternion in world frame
-    msr::airlib::Quaternionr ray_q_w = VectorMath::coordOrientationAdd(ray_q_b, vehicle_pose.orientation);
-
-    // get ray vector (end position)
-    Vector3r end = VectorMath::rotateVector(VectorMath::front(), ray_q_w, true) * params.range_max s+ start;
-
-    FHitResult hit_result = FHitResult(ForceInit);
-    bool is_hit = UAirBlueprintLib::GetObstacle(actor_, ned_transform_->fromLocalNed(start), ned_transform_->fromLocalNed(end), hit_result, actor_, ECC_Visibility);
-
-    if (is_hit) {
-        // decide the frame for the point-cloud
-        switch (params.data_frame) {
-        case AirSimSettings::SonarSetting::DataFrame::VehicleInertialFrame:
-            // current detault behavior; though it is probably not very useful.
-            // not changing the default for now to maintain backwards-compat.
-            point = ned_transform_->toLocalNed(hit_result.ImpactPoint);
-            break;
-        case AirSimSettings::SonarSetting::DataFrame::SensorLocalFrame:
-            // point in vehicle intertial frame
-            Vector3r point_v_i = ned_transform_->toLocalNed(hit_result.ImpactPoint);
-
-            // tranform to lidar frame
-            point = VectorMath::transformToBodyFrame(point_v_i, sonar_pose + vehicle_pose, true);
-
-            break;
-        }
-
-        return true;
-    }
-    else {
-        return false;
-    }
-    */
-    return false;
+    return is_hit;
 }

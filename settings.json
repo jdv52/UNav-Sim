@@ -47,12 +47,14 @@
         "Sonar": {
           "SensorType": 7,
           "Enabled": true,
-          "ElevationAngle": 2,
-          "ElevationResolution": 0.1,
-          "AzimuthResolution":  2,
+          "Pitch": -90,
+          "ElevationAngle": 5,
+          "ElevationResolution": 0.5,
+          "AzimuthResolution": 10,
           "RangeMax": 5,
           "Z": 0.15,
-          "DrawDebugPoints": true
+          "DrawDebugPoints": true,
+          "ReturnPointCloud": true
         }
       }
     }

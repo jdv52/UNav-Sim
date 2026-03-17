@@ -27,8 +27,8 @@ private:
     using VectorMath = msr::airlib::VectorMath;
 
     bool shootBeam(const msr::airlib::Pose& sonar_pose, const msr::airlib::Pose& vehicle_pose,
-                   const float horizontal_angle, const float vertical_angle,
-                   const msr::airlib::SonarSimpleParams& params, Vector3r& point);
+                   const Vector3r& beam,
+                   const msr::airlib::SonarSimpleParams& params, FHitResult& hit);
 
 private:
     AActor* actor_;

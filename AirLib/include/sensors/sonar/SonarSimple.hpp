@@ -27,7 +27,12 @@ namespace airlib
 
             createLasers();
 
-            image_.reserve(azimuth_beam_count * elevation_ray_count);
+            if (params_.return_image) {
+                image_.reserve(azimuth_beam_count * range_bin_count);
+            }
+            if (params_.return_point_cloud) {
+                point_cloud_.reserve(azimuth_beam_count * elevation_ray_count * 3);
+            }
 
             freq_limiter_.initialize(params_.update_frequency, params_.startup_delay);
         }
@@ -41,8 +46,8 @@ namespace airlib
             float min_elevation = -params_.elevation_angle / 2;
             for (int i = 0; i < azimuth_beam_count; ++i) {
                 for (int j = 0; j < elevation_ray_count; ++j) {
-                    const auto elevation_angle = min_elevation + ((j + 1) * params_.elevation_resolution);
-                    const auto azimuth_angle = min_azimuth + ((i + 1) * params_.azimuth_resolution);
+                    const auto elevation_angle = min_elevation + (j * params_.elevation_resolution) + (params_.elevation_resolution / 2);
+                    const auto azimuth_angle = min_azimuth + (i * params_.azimuth_resolution) + (params_.azimuth_resolution / 2);
 
                     Quaternionr ray_q_l = VectorMath::toQuaternion(
                         Utils::degreesToRadians(elevation_angle),
@@ -102,7 +107,7 @@ namespace airlib
             return params_;
         }
 
-        std::vector<Vector3r> getBeams() const
+        const std::vector<Vector3r>& getBeams() const
         {
             return beams;
         }
@@ -112,28 +117,35 @@ namespace airlib
                                    TTimeDelta delta_time, vector<real_T>& image,
                                    vector<real_T>& point_cloud) = 0;
 
+        std::size_t azimuth_beam_count;
+        std::size_t elevation_ray_count;
+        std::size_t range_bin_count;
+
     private: //methods
         void updateOutput()
         {
             TTimeDelta delta_time = clock()->updateSince(last_time_);
 
-            image_.clear();
-
             const GroundTruth& ground_truth = getGroundTruth();
 
+            //order of Pose addition is important here because it also adds quaternions which is not commutative!
+            // TODO: need to understand if there are unnecessary copies of vector being made that can be avoided.
             Pose sonar_pose = params_.relative_pose + ground_truth.kinematics->pose;
-            /*
             getPointCloud(params_.relative_pose, // relative lidar pose
                           ground_truth.kinematics->pose, // relative vehicle pose
                           delta_time,
                           image_,
-                          point_cloud_
-                );
-            */
+                          point_cloud_);
             SonarData output;
-            output.image = image_;
-            output.time_stamp = clock()->nowNanos();
+
             output.pose = sonar_pose;
+            output.time_stamp = clock()->nowNanos();
+
+            output.image_valid = params_.return_image;
+            // output.image = image_;
+
+            output.point_cloud_valid = params_.return_point_cloud;
+            output.point_cloud = point_cloud_;
 
             last_time_ = output.time_stamp;
 
@@ -145,9 +157,6 @@ namespace airlib
         vector<real_T> image_;
         vector<real_T> point_cloud_;
 
-        std::size_t azimuth_beam_count;
-        std::size_t elevation_ray_count;
-        std::size_t range_bin_count;
         std::vector<Vector3r> beams;
 
         FrequencyLimiter freq_limiter_;

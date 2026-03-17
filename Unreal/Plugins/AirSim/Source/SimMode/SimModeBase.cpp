@@ -896,10 +896,11 @@ void ASimModeBase::drawSonarDebugPoints()
                 const msr::airlib::SonarSimple* sonar =
                     static_cast<const msr::airlib::SonarSimple*>(api->getSensors().getByType(SensorType::Sonar, i));
                 if (sonar != nullptr && sonar->getParams().draw_debug_points) {
+                    auto output = sonar->getOutput();
                     auto beams = sonar->getBeams();
-                    auto sonar_pose = sonar->getParams().relative_pose;
+                    auto sonar_pose = output.pose;
 
-                    Vector3r start = vehicle_pose.position;
+                    Vector3r start = sonar_pose.position;
                     FVector start_point = pawn_sim_api->getNedTransform().fromLocalNed(start);
 
                     for (const auto& beam : beams) {
@@ -916,6 +917,24 @@ void ASimModeBase::drawSonarDebugPoints()
                             .03,
                             ECC_WorldStatic,
                             1.f);
+                    }
+                   
+                    if (output.point_cloud_valid) {
+                        for (int j = 0; j < output.point_cloud.size(); j = j + 3) {
+                            Vector3r point(output.point_cloud[j], output.point_cloud[j + 1], output.point_cloud[j + 2]);
+                            Vector3r point_w = VectorMath::transformToWorldFrame(point, output.pose, true);
+
+                            FVector uu_point = pawn_sim_api->getNedTransform().fromLocalNed(point_w);
+
+                            DrawDebugPoint(
+                                this->GetWorld(),
+                                uu_point,
+                                5, // size
+                                FColor::Red,
+                                false, // persistent (never goes away)
+                                0.03 // LifeTime: point leaves a trail on moving object
+                            );
+                        }
                     }
                 }
             }

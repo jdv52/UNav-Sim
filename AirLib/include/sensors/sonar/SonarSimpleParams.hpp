@@ -22,6 +22,9 @@ namespace airlib
 
         Pose relative_pose; // position and orientation
 
+        bool return_image = true;
+        bool return_point_cloud = false;
+
         bool draw_debug_points = false;
         AirSimSettings::SonarSetting::DataFrame data_frame;
 
@@ -41,6 +44,8 @@ namespace airlib
             elevation_resolution = settings_json.getFloat("ElevationResolution", elevation_resolution);
             range_min = settings_json.getFloat("RangeMin", range_min);
             range_max = settings_json.getFloat("RangeMax", range_max);
+            return_image = settings_json.getBool("ReturnImage", return_image);
+            return_point_cloud = settings_json.getBool("ReturnPointCloud", return_point_cloud);
 
             std::string frame = settings_json.getString("DataFrame", AirSimSettings::kVehicleInertialFrame);
             if (frame == AirSimSettings::kVehicleInertialFrame) {
