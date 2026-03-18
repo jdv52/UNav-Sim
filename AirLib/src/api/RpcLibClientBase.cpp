@@ -181,7 +181,7 @@ __pragma(warning(disable : 4239))
 
         msr::airlib::SonarData RpcLibClientBase::getSonarData(const std::string& sonar_name, const std::string& vehicle_name) const
         {
-            return pimpl_->client.call("getLidarData", sonar_name, vehicle_name).as<RpcLibAdaptorsBase::SonarData>().to();
+            return pimpl_->client.call("getSonarData", sonar_name, vehicle_name).as<RpcLibAdaptorsBase::SonarData>().to();
         }
 
         msr::airlib::DvlData RpcLibClientBase::getDvlData(const std::string& dvl_name, const std::string& vehicle_name) const

@@ -904,6 +904,28 @@ class VehicleClient:
         """
         return LidarData.from_msgpack(self.client.call('getLidarData', lidar_name, vehicle_name))
 
+    def getSonarData(self, sonar_name = '', vehicle_name = ''):
+        """
+        Args:
+            sonar_name (str, optional): Name of Sonar to get data from, specified in settings.json
+            vehicle_name (str, optional): Name of vehicle to which the sensor corresponds to
+
+        Returns:
+            SonarData:
+        """
+        return SonarData.from_msgpack(self.client.call('getSonarData', sonar_name, vehicle_name))
+
+    def getDvlData(self, dvl_name = '', vehicle_name = ''):
+        """
+        Args:
+            dvl_name (str, optional): Name of Dvl to get data from, specified in settings.json
+            vehicle_name (str, optional): Name of vehicle to which the sensor corresponds to
+
+        Returns:
+            LidarData:
+        """
+        return DvlData.from_msgpack(self.client.call('getDvlData', dvl_name, vehicle_name))
+
     def simGetLidarSegmentation(self, lidar_name = '', vehicle_name = ''):
         """
         NOTE: Deprecated API, use `getLidarData()` API instead

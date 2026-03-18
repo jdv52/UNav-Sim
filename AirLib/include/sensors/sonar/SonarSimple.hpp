@@ -138,11 +138,12 @@ namespace airlib
                           point_cloud_);
             SonarData output;
 
+            output.data_shape = { azimuth_beam_count, range_bin_count };
             output.pose = sonar_pose;
             output.time_stamp = clock()->nowNanos();
 
             output.image_valid = params_.return_image;
-            // output.image = image_;
+            output.image = image_;
 
             output.point_cloud_valid = params_.return_point_cloud;
             output.point_cloud = point_cloud_;

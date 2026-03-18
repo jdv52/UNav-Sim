@@ -1,4 +1,5 @@
 from __future__ import print_function
+from ctypes.wintypes import POINT
 import msgpackrpc #install as admin: pip install msgpack-rpc-python
 import numpy as np #pip install numpy
 import math
@@ -435,6 +436,32 @@ class LidarData(MsgpackMixin):
     time_stamp = np.uint64(0)
     pose = Pose()
     segmentation = 0
+
+class SonarData(MsgpackMixin):
+    time_stamp = np.uint64(0)
+    pose = Pose()
+    image_valid = False
+    image = 0.0
+    data_shape = 0.0
+    point_cloud_valid = False
+    point_cloud = 0.0
+
+class DvlData(MsgpackMixin):
+    time_stamp = np.uint64(0)
+    pose = Pose()
+    velocity = Vector3r()
+    velocity_covariance = 0.0
+    altitude = 0.0
+    course_gnd = 0.0
+    speed_gnd = 0.0
+    num_good_beams = 0
+    sound_speed = 0.0
+    beam_ranges_valid = False
+    beam_velocities_valid = False
+    beam_unit_vecs = 0.0
+    beam_ranges = 0.0
+    range_covariance = 0.0
+    
 
 class ImuData(MsgpackMixin):
     time_stamp = np.uint64(0)

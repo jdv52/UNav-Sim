@@ -52,14 +52,14 @@ void UnrealSonarSensor::getPointCloud(const msr::airlib::Pose& sonar_pose, const
                     
                     if (params.return_image) {
                         FVector beam_direction = FVector(beam.x(), beam.y(), beam.z()).GetSafeNormal();
-                        float z = 0.1f;
-                        float r = (z - 0.1) / (z + 0.1);
+                        float z = 15000000.0f;
+                        float r = (z - 1500000.0f) / (z + 1500000.0f);
                         float val = r * r * FVector::DotProduct(beam_direction, hit.ImpactNormal);
                         float dist_m = hit.Distance / 100.0f;
 
                         if (dist_m >= params.range_min && dist_m <= params.range_max) {
                             std::size_t range_bin = static_cast<std::size_t>(std::floor(((dist_m - params.range_min) / params.range_resolution)));
-                            // image[i * range_bin_count + range_bin] += val;
+                            image[i * range_bin_count + range_bin] += val;
 
                             // UAirBlueprintLib::LogMessageString("Range: " + std::to_string(dist_m), "", LogDebugLevel::Informational);
                             // UAirBlueprintLib::LogMessageString("Range_bin: " + std::to_string(range_bin), "", LogDebugLevel::Informational);

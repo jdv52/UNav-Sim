@@ -654,7 +654,7 @@ namespace airlib_rpclib
             bool point_cloud_valid;
             std::vector<float> point_cloud;
             
-            MSGPACK_DEFINE_MAP(time_stamp, image, data_shape, pose);
+            MSGPACK_DEFINE_MAP(time_stamp, pose, image_valid, image, data_shape, point_cloud_valid, point_cloud);
 
             SonarData()
             {
