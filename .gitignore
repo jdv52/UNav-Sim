@@ -338,6 +338,7 @@ __pycache__/
 /PythonClient/**/metrics/
 /PythonClient/**/airsim.egg-info/
 /PythonClient/**/dist/
+env/
 
 ### Xcode ###
 build/
