@@ -13,6 +13,13 @@
     "Longitude": 0,
     "Altitude": 0
   },
+  "TimeOfDay": {
+    "Enabled": true,
+    "StartDateTime": "",
+    "CelestialClockSpeed": 1,
+    "StartDateTimeDst": false,
+    "UpdateIntervalSecs": 60
+  },
   "Vehicles": {
     "RovSimple": {
       "VehicleType": "RovSimple",
@@ -52,7 +59,7 @@
           "ElevationResolution": 0.5,
           "RangeResolution": 0.1,
           "AzimuthResolution": 5,
-          "RangeMax": 5,
+          "RangeMax": 20,
           "Z": 0.15,
           "DrawDebugPoints": true,
           "ReturnPointCloud": true

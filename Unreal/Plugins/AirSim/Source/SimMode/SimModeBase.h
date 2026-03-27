@@ -12,6 +12,7 @@
 #include "common/ClockFactory.hpp"
 #include "api/ApiServerBase.hpp"
 #include "api/ApiProvider.hpp"
+#include "SunSkyProvider.h"
 #include "PawnSimApi.h"
 #include "common/StateReporterWrapper.hpp"
 #include "LoadingScreenWidget.h"
@@ -186,10 +187,7 @@ private:
     ULoadingScreenWidget* loading_screen_widget_;
 
     UPROPERTY()
-    AActor* sky_sphere_;
-    UPROPERTY()
-    ADirectionalLight* sun_;
-    FRotator default_sun_rotation_;
+	TScriptInterface<ISunSkyProvider> sun_sky_provider_;
     TTimePoint tod_sim_clock_start_; // sim start in local time
     TTimePoint tod_last_update_;
     TTimePoint tod_start_time_; // tod, configurable
@@ -219,9 +217,7 @@ private:
 
 private:
     void setStencilIDs();
-    void initializeTimeOfDay();
     void advanceTimeOfDay();
-    void setSunRotation(FRotator rotation);
     void setupPhysicsLoopPeriod();
     void showClockStats();
     void drawLidarDebugPoints();
