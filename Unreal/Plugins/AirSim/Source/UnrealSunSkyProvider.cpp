@@ -8,16 +8,24 @@
 #include "AirBlueprintLib.h"
 #include "common/EarthCelestial.hpp"
 
-/*
-UUnrealSunSkyProvider::UUnrealSunSkyProvider(msr::airlib::HomeGeoPoint origin_geopoint)
-	: origin_geopoint_(origin_geopoint)
+UUnrealSunSkyProvider::UUnrealSunSkyProvider()
 {
+    static ConstructorHelpers::FClassFinder<AActor> sky_sphere_class(TEXT("Blueprint'/Engine/EngineSky/BP_Sky_Sphere'"));
+    sky_sphere_class_ = sky_sphere_class.Succeeded() ? sky_sphere_class.Class : nullptr;
+
+    if (!sky_sphere_class_) {
+		UAirBlueprintLib::LogMessage(TEXT("BP_Sky_Sphere class was not found. "),
+			TEXT("TimeOfDay settings would not be applied."), LogDebugLevel::Failure);
+    }
+    else {
+		UAirBlueprintLib::LogMessage(TEXT("BP_Sky_Sphere class was found. "),
+			TEXT("TimeOfDay settings would be applied."), LogDebugLevel::Success);
+    }
 }
-*/
 
-
-void UUnrealSunSkyProvider::initialize()
+void UUnrealSunSkyProvider::initialize(msr::airlib::HomeGeoPoint origin_geopoint)
 {
+	origin_geopoint_ = origin_geopoint;
     TArray<AActor*> sky_spheres;
     UGameplayStatics::GetAllActorsOfClass(this->GetWorld(), sky_sphere_class_, sky_spheres);
 
@@ -45,15 +53,20 @@ void UUnrealSunSkyProvider::initialize()
             sun_->GetRootComponent()->Mobility = EComponentMobility::Movable;
         }
     }
+    else {
+		UAirBlueprintLib::LogMessage(TEXT("BP_Sky_Sphere was not found. "),
+			TEXT("TimeOfDay settings would not be applied."),
+			LogDebugLevel::Failure);
+    }
 }
 
 void UUnrealSunSkyProvider::setTimeOfDay(uint64_t tod)
 {
-    auto coord = msr::airlib::EarthCelestial::getSunCoordinates(tod, origin_geopoint_.home_geo_point.latitude, origin_geopoint_.home_geo_point.longitude);
-    
-    FRotator rotation(-coord.altitude, coord.azimuth, 0);
-
     if (sun_ && sky_sphere_) {
+        auto coord = msr::airlib::EarthCelestial::getSunCoordinates(tod, origin_geopoint_.home_geo_point.latitude, origin_geopoint_.home_geo_point.longitude);
+
+        FRotator rotation(-coord.altitude, coord.azimuth, 0);
+
         UAirBlueprintLib::RunCommandOnGameThread([this, rotation]() {
             sun_->SetActorRotation(rotation);
 

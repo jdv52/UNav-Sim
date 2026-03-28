@@ -18,6 +18,7 @@
 #include "sensors/distance/DistanceSimple.hpp"
 #include "sensors/dvl/DvlSimple.hpp"
 #include "sensors/sonar/SonarSimple.hpp"
+#include "UnrealSunSkyProvider.h"
 
 #include "Weather/WeatherLib.h"
 
@@ -54,9 +55,6 @@ ASimModeBase::ASimModeBase()
     pip_camera_class = pip_camera_class_val.Succeeded() ? pip_camera_class_val.Class : nullptr;
 
     PrimaryActorTick.bCanEverTick = true;
-
-    static ConstructorHelpers::FClassFinder<AActor> sky_sphere_class(TEXT("Blueprint'/Engine/EngineSky/BP_Sky_Sphere'"));
-    sky_sphere_class_ = sky_sphere_class.Succeeded() ? sky_sphere_class.Class : nullptr;
 
     static ConstructorHelpers::FClassFinder<UUserWidget> loading_screen_class_find(TEXT("WidgetBlueprint'/AirSim/Blueprints/BP_LoadingScreenWidget'"));
     if (loading_screen_class_find.Succeeded()) {
@@ -136,6 +134,9 @@ void ASimModeBase::BeginPlay()
     setupInputBindings();
 
     // time of day would be initialized here
+    UUnrealSunSkyProvider* Obj = NewObject<UUnrealSunSkyProvider>(this);
+	Obj->initialize(getSettings().origin_geopoint);
+    sun_sky_provider_ = TScriptInterface<ISunSkyProvider>(Obj);
     AirSimSettings::TimeOfDaySetting tod_setting = getSettings().tod_setting;
     setTimeOfDay(tod_setting.enabled, tod_setting.start_datetime, tod_setting.is_start_datetime_dst, tod_setting.celestial_clock_speed, tod_setting.update_interval_secs, tod_setting.move_sun);
 
@@ -362,21 +363,12 @@ void ASimModeBase::advanceTimeOfDay()
 
             UAirBlueprintLib::LogMessageString("DateTime: ", Utils::to_string(cur_time), LogDebugLevel::Informational);
 
-            
-
             if (sun_sky_provider_.GetObject() != nullptr) {
                 sun_sky_provider_->setTimeOfDay(cur_time);
             }
         }
     }
 }
-
-/*
-void ASimModeBase::setSunRotation(FRotator rotation)
-{
-    
-}
-*/
 
 void ASimModeBase::reset()
 {

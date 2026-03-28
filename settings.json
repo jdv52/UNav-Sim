@@ -18,7 +18,7 @@
     "StartDateTime": "",
     "CelestialClockSpeed": 1,
     "StartDateTimeDst": false,
-    "UpdateIntervalSecs": 60
+    "UpdateIntervalSecs": 5
   },
   "Vehicles": {
     "RovSimple": {

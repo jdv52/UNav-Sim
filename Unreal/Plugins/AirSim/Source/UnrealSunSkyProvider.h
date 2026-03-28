@@ -30,8 +30,9 @@ class AIRSIM_API UUnrealSunSkyProvider : public UObject, public ISunSkyProvider
 	FRotator default_sun_rotation_;
 	
 public:
+	UUnrealSunSkyProvider();
 
-	void initialize();
+	void initialize(msr::airlib::HomeGeoPoint origin_geopoint);
 
 	virtual void setTimeOfDay(uint64_t tod) override;
 };
