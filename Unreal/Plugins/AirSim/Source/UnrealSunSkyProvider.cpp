@@ -12,15 +12,6 @@ UUnrealSunSkyProvider::UUnrealSunSkyProvider()
 {
     static ConstructorHelpers::FClassFinder<AActor> sky_sphere_class(TEXT("Blueprint'/Engine/EngineSky/BP_Sky_Sphere'"));
     sky_sphere_class_ = sky_sphere_class.Succeeded() ? sky_sphere_class.Class : nullptr;
-
-    if (!sky_sphere_class_) {
-		UAirBlueprintLib::LogMessage(TEXT("BP_Sky_Sphere class was not found. "),
-			TEXT("TimeOfDay settings would not be applied."), LogDebugLevel::Failure);
-    }
-    else {
-		UAirBlueprintLib::LogMessage(TEXT("BP_Sky_Sphere class was found. "),
-			TEXT("TimeOfDay settings would be applied."), LogDebugLevel::Success);
-    }
 }
 
 void UUnrealSunSkyProvider::initialize(msr::airlib::HomeGeoPoint origin_geopoint)

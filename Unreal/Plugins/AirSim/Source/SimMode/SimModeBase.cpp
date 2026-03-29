@@ -133,12 +133,10 @@ void ASimModeBase::BeginPlay()
     record_tick_count = 0;
     setupInputBindings();
 
-    // time of day would be initialized here
+    // Initialize with a default sun sky provider
     UUnrealSunSkyProvider* Obj = NewObject<UUnrealSunSkyProvider>(this);
-	Obj->initialize(getSettings().origin_geopoint);
-    sun_sky_provider_ = TScriptInterface<ISunSkyProvider>(Obj);
-    AirSimSettings::TimeOfDaySetting tod_setting = getSettings().tod_setting;
-    setTimeOfDay(tod_setting.enabled, tod_setting.start_datetime, tod_setting.is_start_datetime_dst, tod_setting.celestial_clock_speed, tod_setting.update_interval_secs, tod_setting.move_sun);
+    Obj->initialize(getSettings().origin_geopoint);
+    setSunSkyProvider(Obj);
 
     UAirBlueprintLib::LogMessage(TEXT("Press F1 to see help"), TEXT(""), LogDebugLevel::Informational);
 
@@ -258,6 +256,29 @@ bool ASimModeBase::isPaused() const
 void ASimModeBase::pause(bool is_paused)
 {
     UGameplayStatics::SetGamePaused(this->GetWorld(), is_paused);
+}
+
+void ASimModeBase::setSunSkyProvider(UObject* obj)
+{
+    if (obj->Implements<USunSkyProvider>())
+    {
+        sun_sky_provider_ = TScriptInterface<ISunSkyProvider>(obj);
+        AirSimSettings::TimeOfDaySetting tod_setting = getSettings().tod_setting;
+
+        setTimeOfDay(
+            tod_setting.enabled,
+            tod_setting.start_datetime,
+            tod_setting.is_start_datetime_dst,
+            tod_setting.celestial_clock_speed,
+            tod_setting.update_interval_secs,
+            tod_setting.move_sun
+        );
+    }
+    else {
+		UAirBlueprintLib::LogMessage(TEXT("Object does not implement SunSkyProvider interface. "),
+			TEXT("SunSkyProvider not set."),
+			LogDebugLevel::Failure);
+    }
 }
 
 void ASimModeBase::continueForTime(double seconds)
