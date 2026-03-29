@@ -502,7 +502,7 @@ public:
     static string to_string(time_t tt, const char* format = "%Y-%m-%d-%H-%M-%S")
     {
         char str[1024];
-        if (std::strftime(str, sizeof(str), format, std::localtime(&tt)))
+        if (std::strftime(str, sizeof(str), format, std::gmtime(&tt)))
             return string(str);
         else
             return string();
@@ -512,7 +512,7 @@ public:
     {
         time_t tt = system_clock::to_time_t(time);
         char str[1024];
-        if (std::strftime(str, sizeof(str), format, std::localtime(&tt)))
+        if (std::strftime(str, sizeof(str), format, std::gmtime(&tt)))
             return string(str);
         else
             return string();

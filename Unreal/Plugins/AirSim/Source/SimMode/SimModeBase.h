@@ -122,6 +122,10 @@ public:
         return external_image_capture_.get();
     }
 
+    virtual const msr::airlib::AirSimSettings& getSettings() const;
+
+    virtual void getExistingVehiclePawns(TArray<AActor*>& pawns) const;
+
     const UnrealImageCapture* getImageCapture(const std::string& vehicle_name = "", bool external = false) const;
 
     TMap<FString, FAssetData> asset_map;
@@ -132,7 +136,6 @@ protected: //must overrides
     typedef msr::airlib::AirSimSettings AirSimSettings;
 
     virtual std::unique_ptr<msr::airlib::ApiServerBase> createApiServer() const;
-    virtual void getExistingVehiclePawns(TArray<AActor*>& pawns) const;
     virtual bool isVehicleTypeSupported(const std::string& vehicle_type) const;
     virtual std::string getVehiclePawnPathName(const AirSimSettings::VehicleSetting& vehicle_setting) const;
     virtual PawnEvents* getVehiclePawnEvents(APawn* pawn) const;
@@ -157,7 +160,6 @@ protected: //optional overrides
     virtual void initializeExternalCameras();
 
 protected: //Utility methods for derived classes
-    virtual const AirSimSettings& getSettings() const;
     FRotator toFRotator(const AirSimSettings::Rotation& rotation, const FRotator& default_val);
 
 protected:
