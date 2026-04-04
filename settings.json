@@ -9,13 +9,13 @@
     "DefaultComputerVision": { "PawnBP": "Class'/AirSim/Blueprints/BP_ComputerVisionPawn.BP_ComputerVisionPawn_C'" }
   },
   "OriginGeopoint": {
-    "Latitude": 0,
-    "Longitude": 0,
-    "Altitude": 0
+    "Latitude": 36.79028300504856,
+    "Longitude": -121.9314307323606,
+    "Altitude": -200
   },
   "TimeOfDay": {
     "Enabled": true,
-    "StartDateTime": "",
+    "StartDateTime": "2026-03-29 08:20:00",
     "CelestialClockSpeed": 1,
     "StartDateTimeDst": false,
     "UpdateIntervalSecs": 5
